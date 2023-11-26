@@ -24,15 +24,18 @@ default_retry_instructions = linesep.join([
     'Translate the subtitles again, making sure every line has a translation that matches the dialog.'
 ])
 
+
 def env_bool(key, default=False):
     var = os.getenv(key, default)
     return var and str(var).lower() in ('true', 'yes', '1')
+
 
 default_options = {
     'version': __version__,
     'api_key': os.getenv('API_KEY', None),
     'api_base': os.getenv('API_BASE', 'https://api.openai.com/v1'),
-    'gpt_model': os.getenv('GPT_MODEL', 'gpt-3.5-turbo'),
+    # 'gpt_model': os.getenv('GPT_MODEL', 'gpt-3.5-turbo'),
+    'gpt_model': os.getenv('GPT_MODEL', 'gpt-4-1106-preview'),
     'gpt_prompt': os.getenv('GPT_PROMPT', "Please translate these subtitles[ for movie][ to language]."),
     'instruction_file': os.getenv('INSTRUCTION_FILE', "instructions.txt"),
     'target_language': os.getenv('TARGET_LANGUAGE', 'English'),
@@ -48,20 +51,21 @@ default_options = {
     'max_characters': int(os.getenv('MAX_CHARACTERS', 99)),
     'max_newlines': int(os.getenv('MAX_NEWLINES', 3)),
     'match_partial_words': env_bool('MATCH_PARTIAL_WORDS', False),
-    'whitespaces_to_newline' : env_bool('WHITESPACES_TO_NEWLINE', False),
-    'max_lines': int(os.getenv('MAX_LINES')) if os.getenv('MAX_LINES') else None, 
+    'whitespaces_to_newline': env_bool('WHITESPACES_TO_NEWLINE', False),
+    'max_lines': int(os.getenv('MAX_LINES')) if os.getenv('MAX_LINES') else None,
     'rate_limit': float(os.getenv('RATE_LIMIT')) if os.getenv('RATE_LIMIT') else None,
     'max_threads': int(os.getenv('MAX_THREADS', 4)),
     'max_retries': int(os.getenv('MAX_RETRIES', 5)),
     'backoff_time': float(os.getenv('BACKOFF_TIME', 4.0)),
-    'project' : os.getenv('PROJECT', None),
+    'project': os.getenv('PROJECT', None),
     'autosave': env_bool('AUTOSAVE', True),
     'enforce_line_parity': env_bool('ENFORCE_LINE_PARITY', True),
-    'stop_on_error' : env_bool('STOP_ON_ERROR'),
-    'write_backup' : env_bool('WRITE_BACKUP_FILE', True),
-    'theme' : os.getenv('THEME', None),
-    'firstrun' : False
+    'stop_on_error': env_bool('STOP_ON_ERROR'),
+    'write_backup': env_bool('WRITE_BACKUP_FILE', True),
+    'theme': os.getenv('THEME', None),
+    'firstrun': False
 }
+
 
 class Options:
     def __init__(self, options=None, **kwargs):
@@ -83,7 +87,7 @@ class Options:
 
     def get(self, option, default=None):
         return self.options.get(option, default)
-    
+
     def add(self, option, value):
         self.options[option] = value
 
@@ -98,8 +102,8 @@ class Options:
         return self.get('api_key')
 
     def api_base(self):
-        return self.get('api_base')    
-    
+        return self.get('api_base')
+
     def allow_multithreaded_translation(self):
         return self.get('max_threads') and self.get('max_threads') > 1
 
@@ -112,34 +116,34 @@ class Options:
                 if value:
                     text = text.replace(f"[{name}]", str(value))
         return text
-    
+
     def GetNonProjectSpecificOptions(self):
         """
         Get a copy of the options with only the default keys included
         """
-        options = { key: self.get(key) for key in self.options.keys() & default_options.keys() }
+        options = {key: self.get(key) for key in self.options.keys() & default_options.keys()}
         return Options(options)
-    
+
     def GetSettings(self) -> dict:
         """
         Return a dictionary of generic options
         """
-        exclusions = [ 'instructions', 'retry_instructions' ]
-        keys = [ key for key in default_options.keys() if key not in exclusions]
-        settings = { key: self.get(key) for key in keys if key in self.options.keys() }
+        exclusions = ['instructions', 'retry_instructions']
+        keys = [key for key in default_options.keys() if key not in exclusions]
+        settings = {key: self.get(key) for key in keys if key in self.options.keys()}
         return settings
 
     def Load(self):
         if not os.path.exists(settings_path) or self.get('firstrun'):
             return False
-        
+
         try:
             with open(settings_path, "r", encoding="utf-8") as settings_file:
                 settings = json.load(settings_file)
-            
+
             if not settings:
                 return False
-            
+
             if settings.get('version') != default_options['version']:
                 self._update_settings_version(settings)
 
@@ -149,19 +153,19 @@ class Options:
             self.options.update(settings)
 
             return True
-        
+
         except Exception as e:
             logging.error(f"Error loading settings from {settings_path}")
             return False
 
     def Save(self):
         try:
-            settings : dict = self.GetSettings()
+            settings: dict = self.GetSettings()
 
             if not settings:
                 return False
-            
-            save_dict = { key : value for key, value in settings.items() if value != default_options.get(key) }
+
+            save_dict = {key: value for key, value in settings.items() if value != default_options.get(key)}
 
             if save_dict:
                 os.makedirs(config_dir, exist_ok=True)
@@ -203,7 +207,8 @@ class Options:
         This is where we would patch or remove any out of date settings.
         """
         current_version = default_options['version']
-        settings['version'] = current_version    
+        settings['version'] = current_version
+
 
 def LoadInstructionsFile(filepath):
     """
@@ -220,6 +225,5 @@ def LoadInstructionsFile(filepath):
                     return linesep.join(lines[:idx]), linesep.join(lines[idx + 1:])
 
             return linesep.join(lines), []
-        
-    return None, None
 
+    return None, None

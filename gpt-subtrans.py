@@ -5,9 +5,9 @@ import logging
 from PySubtitleGPT.Helpers import ParseCharacters, ParseSubstitutions
 from PySubtitleGPT.Options import Options
 from PySubtitleGPT.SubtitleProject import SubtitleProject
+from PySubtitleGPT.log_config import setup_logging
 
-logging_level = eval(f"logging.{os.getenv('LOG_LEVEL', 'INFO')}")
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging_level)
+setup_logging()
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='Translates an SRT file using ChatGPT')

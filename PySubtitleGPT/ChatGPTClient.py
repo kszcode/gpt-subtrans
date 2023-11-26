@@ -10,18 +10,20 @@ from PySubtitleGPT.SubtitleError import NoTranslationError, TranslationError, Tr
 
 linesep = '\n'
 
+
 class ChatGPTClient:
     """
     Handles communication with OpenAI to request translations
     """
-    def __init__(self, options : Options, instructions=None):
+
+    def __init__(self, options: Options, instructions=None):
         self.options = options
         self.instructions = instructions or options.get('instructions', "")
 
         if not self.instructions:
             raise TranslationError("No instructions provided for the translator")
 
-    def RequestTranslation(self, prompt : str, lines : list, context : dict):
+    def RequestTranslation(self, prompt: str, lines: list, context: dict):
         """
         Generate the messages to send to OpenAI to request a translation
         """
@@ -33,14 +35,14 @@ class ChatGPTClient:
 
         gpt_prompt.GenerateMessages(prompt, lines, context)
 
-        logging.debug(f"Messages:\n{FormatMessages(gpt_prompt.messages)}")
+        logging.debug(f"RequestTranslation:Messages:\n{FormatMessages(gpt_prompt.messages)}")
 
         gpt_translation = self.SendMessages(gpt_prompt.messages)
 
         translation = ChatGPTTranslation(gpt_translation, gpt_prompt)
 
         if translation.text:
-            logging.debug(f"Response:\n{translation.text}")
+            logging.debug(f"RequestTranslation:Response:\n{translation.text}")
 
         # If a rate limit is replied ensure a minimum duration for each request
         rate_limit = options.get('rate_limit')
@@ -50,11 +52,12 @@ class ChatGPTClient:
             elapsed_time = time.monotonic() - start_time
             if elapsed_time < minimum_duration:
                 sleep_time = minimum_duration - elapsed_time
+                logging.debug(f"RequestTranslation:Sleeping for {sleep_time} seconds to respect rate limit")
                 time.sleep(sleep_time)
 
         return translation
 
-    def RequestRetranslation(self, translation : ChatGPTTranslation, errors : list[TranslationError]):
+    def RequestRetranslation(self, translation: ChatGPTTranslation, errors: list[TranslationError]):
         """
         Generate the messages to send to OpenAI to request a retranslation
         """
@@ -85,7 +88,7 @@ class ChatGPTClient:
         retranslation = ChatGPTTranslation(gpt_retranslation, prompt)
         return retranslation
 
-    def SendMessages(self, messages : list[str], temperature : float = None):
+    def SendMessages(self, messages: list[str], temperature: float = None):
         """
         Make a request to the OpenAI API to provide a translation
         """
@@ -108,6 +111,7 @@ class ChatGPTClient:
                     temperature=temperature
                 )
 
+                logging.debug(f"SendMessages:Response:\n{response}")
                 translation['response_time'] = getattr(response, 'response_ms', 0)
 
                 if response.usage:
@@ -126,8 +130,9 @@ class ChatGPTClient:
                     raise NoTranslationError("No choices returned in the response", response)
 
                 # Return the response if the API call succeeds
+                logging.debug(f"SendMessages:Translation:\n{translation}")
                 return translation
-            
+
             except openai.RateLimitError as e:
                 retry_after = e.headers.get('x-ratelimit-reset-requests') or e.headers.get('Retry-After')
                 if retry_after:
@@ -147,7 +152,7 @@ class ChatGPTClient:
                     raise
                 else:
                     retries += 1
-                    sleep_time = backoff_time * 2.0**retries
+                    sleep_time = backoff_time * 2.0 ** retries
                     logging.warning(f"OpenAI error {str(e)}, retrying in {sleep_time}...")
                     time.sleep(sleep_time)
                     continue
@@ -156,4 +161,3 @@ class ChatGPTClient:
                 raise TranslationImpossibleError(f"Unexpected error communicating with OpenAI", translation, error=e)
 
         return None
-
