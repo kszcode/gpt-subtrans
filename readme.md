@@ -1,3 +1,6 @@
+# To run it see run-local-samples.md
+
+
 # GPT-Subtrans
 GPT-Subtrans is an open source subtitle translator built with OpenAI's ChatGPT. It can translate subtitles between any language pairs supported by the GPT language model. You will need an OpenAI API key from https://platform.openai.com/account/api-keys to use the translator. If you are on the free trial the speed will be severely restricted.
 
