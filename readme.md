@@ -1,10 +1,10 @@
 # GPT-Subtrans
-GPT-Subtrans is an open source subtitle translator built with OpenAI's ChatGPT. It can translate subtitles between any language pairs supported by the GPT language model. You will need an OpenAI API key from https://platform.openai.com/account/api-keys to use the translator. If you are on the free trial the speed will be severely restricted.
+GPT-Subtrans is an open source subtitle translator built with OpenAI's GPT. It can translate subtitles between any language pairs supported by the GPT language model. You will need an OpenAI API key from https://platform.openai.com/account/api-keys to use the translator. If you are on the free trial the speed will be severely restricted.
 
 Note: GPT-Subtrans requires an active internet connection to access the OpenAI API. Subtitles are sent to OpenAI's servers for translation, so their privacy policy applies: https://openai.com/policies/privacy-policy.
 
 ## New
-I have been unable to get the PyInstaller packager working with the PySide6 library used for the GUI on MacOS for some time now, so the most recent releases are Windows only. Until further notice the last working MacOS release is 0.4.4. The latest version should still work on MacOS if you install it from source.
+I have been unable to get PyInstaller to build universal binaries on MacOS for several recent versions, so I can only provide releases for Apple Silicon. The latest version should still work on Intel Macs if you install from source.
 
 ## Installation
 For most users the packaged release is the easiest way to use the program. Simply unzip to a folder and run `gui-subtrans.exe`. You will be prompted for some basic settings on first-run.
@@ -87,7 +87,7 @@ along with some other configuration options. See Options.py for the full list. A
   Optionally specify the name of the movie to give context to the translator.
 
 - `--description`:
-  A brief description of the film to give context. Less is more here, otherwise ChatGPT can start improvising.
+  A brief description of the film to give context. Less is more here, otherwise GPT can start improvising.
 
 - `-c`, `--character`, `--characters`:
   Optionally provide (a list of) character names to use in the translation.
@@ -100,19 +100,19 @@ along with some other configuration options. See Options.py for the full list. A
 
 - `--batchthreshold`:
   Number of seconds between lines to consider starting a new batch of subtitles to translate.
-  Smaller batches take longer and cost more, but introduce more sync points and reduce the scope for ChatGPT to drift.
+  Smaller batches take longer and cost more, but introduce more sync points and reduce the scope for GPT to drift.
 
 - `--minbatchsize`:
-  Minimum number of lines to consider starting a new batch to send to ChatGPT. Higher values result in
-  faster and cheaper translations but increase the risk of ChatGPT desyncing.
+  Minimum number of lines to consider starting a new batch to send to GPT. Higher values result in
+  faster and cheaper translations but increase the risk of GPT desyncing.
 
 - `--maxbatchsize`:
   Maximum number of lines before starting a new batch is compulsory. Higher values make the translation
-  faster and cheaper, but increase the risk of ChatGPT getting confused or improvising.
+  faster and cheaper, but increase the risk of GPT getting confused or improvising.
 
 - `--maxbatchsize`:
   Maximum number of lines before starting a new batch is compulsory. Higher values make the translation
-  faster and cheaper, but increase the risk of ChatGPT getting confused or improvising.
+  faster and cheaper, but increase the risk of GPT getting confused or improvising.
 
 - `-k`, `--apikey`:
   Your OpenAI API Key (https://platform.openai.com/account/api-keys). Not required if it is set in .env
