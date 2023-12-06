@@ -111,7 +111,7 @@ class ChatGPTClient:
                     temperature=temperature
                 )
 
-                logging.debug(f"SendMessages:Response:\n{response}")
+                # logging.debug(f"SendMessages:Response:\n{response}")
                 translation['response_time'] = getattr(response, 'response_ms', 0)
 
                 if response.usage:

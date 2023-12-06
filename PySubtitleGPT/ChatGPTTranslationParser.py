@@ -48,7 +48,7 @@ class ChatGPTTranslationParser:
             if matches:
                 break
 
-        logging.debug(f"Matches: {str(matches)}")
+        # logging.debug(f"Matches: {str(matches)}")
 
         subs = [SubtitleLine.FromDictionary(match) for match in matches]
         self.translations = { 
