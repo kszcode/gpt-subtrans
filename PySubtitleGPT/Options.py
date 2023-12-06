@@ -36,7 +36,7 @@ default_options = {
     'api_base': os.getenv('API_BASE', 'https://api.openai.com/v1'),
     'gpt_model': os.getenv('GPT_MODEL', 'gpt-3.5-turbo'),
     # 'gpt_model': os.getenv('GPT_MODEL', 'gpt-4-1106-preview'),
-    'gpt_prompt': os.getenv('GPT_PROMPT', "Please translate these subtitles[ for movie][ to language]."),
+    'gpt_prompt': os.getenv('GPT_PROMPT', "Please translate these subtitles"),
     'instruction_file': os.getenv('INSTRUCTION_FILE', "instructions.txt"),
     'target_language': os.getenv('TARGET_LANGUAGE', 'English'),
     'include_original': env_bool('INCLUDE_ORIGINAL', False),
