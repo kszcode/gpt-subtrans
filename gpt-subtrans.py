@@ -67,7 +67,7 @@ try:
 
     project.Initialise(args.input, args.output)
 
-    logging.info(f"Translating {project.subtitles.linecount} subtitles from {args.input}")
+    logging.info(f"Translating {project.subtitles.linecount} subtitles from {args.input} using {project.options.gpt_model}")
 
     project.TranslateSubtitles()
 
