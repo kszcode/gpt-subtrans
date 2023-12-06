@@ -24,6 +24,7 @@ parser.add_argument('-s', '--substitution', action='append', type=str, default=N
 parser.add_argument('-i', '--instruction', action='append', type=str, default=None, help="An instruction for Chat GPT about the translation")
 parser.add_argument('-f', '--instructionfile', type=str, default=None, help="Name/path of a file to load GPT instructions from")
 parser.add_argument('-b', '--apibase', type=str, default=None, help="API backend base address, the default value is https://api.openai.com/v1")
+parser.add_argument('-g', '--gptmodel', type=str, default=None, help="The GPT model to use, the default value is gpt-3.5-turbo")
 parser.add_argument('--description', type=str, default=None, help="A brief description of the film to give context")
 parser.add_argument('--characters', type=str, default=None, help="A list of character names")
 parser.add_argument('--minbatchsize', type=int, default=None, help="Minimum number of lines to consider starting a new batch")
@@ -40,6 +41,7 @@ try:
     options = Options({
         'api_key': args.apikey,
         'api_base': args.apibase,
+        'gpt_model': args.gptmodel,
         'max_lines': args.maxlines,
         'rate_limit': args.ratelimit,
         'target_language': args.target_language,
